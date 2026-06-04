@@ -1,0 +1,8 @@
+/* 
+  Tailwind compiled setup skipped by user request. 
+  This directory file is loaded as a fallback link while the 
+  Frontend uses the high-performance Tailwind CDN Engine.
+*/
+.tailwind-cdn-active {
+    display: block;
+}

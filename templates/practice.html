@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Practice Flashcards Deck</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen p-6 flex flex-col justify-between">
+    <div class="max-w-md w-full mx-auto space-y-6 pt-6">
+        <div class="text-left">
+            <a href="/dashboard" class="text-xs font-bold text-blue-600 hover:underline">← Escape Deck Module</a>
+        </div>
+        
+        <div onclick="flipCard()" class="bg-white min-h-[280px] rounded-2xl border-2 border-slate-200 shadow-xl p-8 flex flex-col justify-center items-center cursor-pointer hover:border-blue-500 transition-all duration-300 transform active:scale-95 select-none relative group">
+            <span class="absolute top-3 right-4 text-[9px] font-bold text-slate-400 tracking-wider uppercase bg-slate-100 px-2 py-0.5 rounded">Click Card to Flip</span>
+            
+            <div id="cardFront" class="text-center space-y-3 block">
+                <div class="flex items-center justify-center space-x-2">
+                    <div id="vocabWord" class="text-6xl font-black text-slate-900 tracking-tight">学习</div>
+                    <button onclick="event.stopPropagation(); speakCurrentWord();" class="text-lg p-1 bg-slate-50 rounded-full hover:bg-slate-100">🔊</button>
+                </div>
+                <div id="vocabPinyin" class="text-base font-mono text-slate-400 font-medium">xué xí</div>
+            </div>
+            
+            <div id="cardBack" class="text-center space-y-2 hidden">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Translation / Concept Matrix</p>
+                <div id="vocabEnglish" class="text-xl font-extrabold text-blue-600 px-4">To study / Learn / System Practice</div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-4">
+            <button onclick="loadPreviousCard()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold py-3 rounded-xl transition uppercase tracking-wider">
+                Previous Card
+            </button>
+            <button onclick="loadNextCard()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-3 rounded-xl transition shadow-md uppercase tracking-wider">
+                Next Card →
+            </button>
+        </div>
+    </div>
+
+    <p class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest pb-4">
+        Active Flashcard Cache Index: <span id="deckCounter" class="text-blue-600 font-black">1</span> / 5
+    </p>
+
+    <script>
+        const flashcardDataSet = [
+            { word: "学习", pinyin: "xué xí", english: "To study / Learn / System Practice" },
+            { word: "考试", pinyin: "kǎo shì", english: "Exam / Test / Evaluation Sequence" },
+            { word: "成功", pinyin: "chéng gōng", english: "Success / Compilation Completed" },
+            { word: "毕业", pinyin: "bì yè", english: "To graduate from University" },
+            { word: "证书", pinyin: "zhèng shū", english: "Official Qualification Certificate" }
+        ];
+
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function flipCard() {
+            const front = document.getElementById("cardFront");
+            const back = document.getElementById("cardBack");
+            if (!isFlipped) {
+                front.classList.replace("block", "hidden");
+                back.classList.replace("hidden", "block");
+            } else {
+                back.classList.replace("block", "hidden");
+                front.classList.replace("hidden", "block");
+            }
+            isFlipped = !isFlipped;
+        }
+
+        function updateCardDisplay() {
+            isFlipped = false;
+            document.getElementById("cardFront").classList.replace("hidden", "block");
+            document.getElementById("cardBack").classList.replace("block", "hidden");
+
+            const item = flashcardDataSet[currentIndex];
+            document.getElementById("vocabWord").innerText = item.word;
+            document.getElementById("vocabPinyin").innerText = item.pinyin;
+            document.getElementById("vocabEnglish").innerText = item.english;
+            document.getElementById("deckCounter").innerText = currentIndex + 1;
+        }
+
+        function loadNextCard() {
+            currentIndex = (currentIndex + 1) % flashcardDataSet.length;
+            updateCardDisplay();
+        }
+
+        function loadPreviousCard() {
+            currentIndex = (currentIndex - 1 + flashcardDataSet.length) % flashcardDataSet.length;
+            updateCardDisplay();
+        }
+
+        function speakCurrentWord() {
+            const text = flashcardDataSet[currentIndex].word;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-CN';
+            window.speechSynthesis.speak(utterance);
+        }
+    </script>
+</body>
+</html>
